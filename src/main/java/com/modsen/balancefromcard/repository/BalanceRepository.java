@@ -1,14 +1,14 @@
 package com.modsen.balancefromcard.repository;
 
 import com.modsen.balancefromcard.model.Balance;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
 
 @Repository
-public interface BalanceRepository extends MongoRepository<Balance, ObjectId> {
+public interface BalanceRepository extends ReactiveMongoRepository<Balance, String> {
 
-    Balance findByCardNumber(Long cardNumber);
+    Mono<Balance> findByCardNumber(Long cardNumber);
 
 }

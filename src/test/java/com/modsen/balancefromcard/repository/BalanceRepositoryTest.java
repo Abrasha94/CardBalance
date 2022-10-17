@@ -6,10 +6,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,27 +20,39 @@ class BalanceRepositoryTest {
     @Autowired
     BalanceRepository balanceRepository;
 
-    final Balance balance = new Balance(BigDecimal.TEN, 123456L, 321L);
-    List<Balance> list = new ArrayList<>();
+    final Balance balance = new Balance("1", BigDecimal.TEN, 123456L, 321L);
 
     @BeforeEach
     void setUp() {
-        list.add(balance);
-        balanceRepository.save(balance);
+        balanceRepository.save(balance).block();
     }
 
     @AfterEach
     void tearDown() {
-        balanceRepository.delete(balance);
+        balanceRepository.delete(balance).block();
     }
 
     @Test
     void shouldReturnBalance() {
-        assertThat(balanceRepository.findByCardNumber(123456L)).isEqualTo(balance);
+        final Mono<Balance> balanceMono = balanceRepository.findByCardNumber(123456L);
+        StepVerifier
+                .create(balanceMono)
+                .assertNext(balance1 -> {
+                    assertThat(balance1.getId()).isEqualTo("1");
+                    assertThat(balance1.getBalance()).isEqualTo(BigDecimal.TEN);
+                    assertThat(balance1.getUserId()).isEqualTo(321L);
+                })
+                .expectComplete()
+                .verify();
     }
 
     @Test
     void shouldBeNotEmpty() {
-        assertThat(balanceRepository.findAll()).isNotEmpty();
+        final Flux<Balance> flux = balanceRepository.findAll();
+        StepVerifier
+                .create(flux)
+                .expectSubscription()
+                .expectNextCount(3)
+                .verifyComplete();
     }
 }

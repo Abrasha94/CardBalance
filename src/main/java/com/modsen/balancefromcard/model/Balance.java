@@ -19,8 +19,9 @@ public class Balance {
     private Long cardNumber;
     private Long userId;
 
-    public Balance(BigDecimal balance, Long cardNumber, Long userId) {
+    public Balance(String id,BigDecimal balance, Long cardNumber, Long userId) {
         super();
+        this.id = id;
         this.balance = balance;
         this.cardNumber = cardNumber;
         this.userId = userId;

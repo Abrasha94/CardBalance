@@ -1,4 +1,4 @@
-package config;
+package com.modsen.balancefromcard.config;
 
 import com.modsen.balancefromcard.dto.response.BalanceResponseDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
