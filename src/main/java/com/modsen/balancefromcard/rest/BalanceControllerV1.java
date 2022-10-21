@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+
 @RestController
 @RequestMapping("/api/v1/balance/")
 public class BalanceControllerV1 {
@@ -27,5 +28,10 @@ public class BalanceControllerV1 {
         return balanceService.findBalanceByCardNumber(cardNumber)
                 .map(balanceResponseDto -> new ResponseEntity<>(balanceResponseDto, HttpStatus.OK))
                 .defaultIfEmpty(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("admin")
+    public ResponseEntity<String> getAdmin() {
+        return ResponseEntity.ok("Hello admin!");
     }
 }
