@@ -1,14 +1,12 @@
 package com.modsen.balancefromcard.service;
 
 import com.modsen.balancefromcard.dto.response.BalanceResponseDto;
-import com.modsen.balancefromcard.exception.BalanceNotFoundException;
-import com.modsen.balancefromcard.model.Balance;
 import com.modsen.balancefromcard.repository.BalanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 
 @EnableKafka
@@ -24,18 +22,12 @@ public class BalanceService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public BalanceResponseDto findBalanceByCardNumber(Long cardNumber) {
-        final Balance balance = balanceRepository.findByCardNumber(cardNumber);
-        if (balance == null) {
-            throw new BalanceNotFoundException("Balance not found!");
-        } else {
-            return BalanceResponseDto.fromBalance(balance);
-        }
+    public Mono<BalanceResponseDto> findBalanceByCardNumber(Long cardNumber) {
+        return balanceRepository.findByCardNumber(cardNumber).map(BalanceResponseDto::fromBalance);
     }
 
-    @KafkaListener(topics = "balanceRequest")
-    public void msgListener(String msg) {
-        final BalanceResponseDto balance = findBalanceByCardNumber(Long.valueOf(msg));
-        kafkaTemplate.send("balanceResponse", balance);
-    }
+//    @KafkaListener(topics = "balanceRequest")
+//    public void msgListener(String msg) {
+//        findBalanceByCardNumber(Long.valueOf(msg)).subscribe(result -> kafkaTemplate.send("balanceResponse", result));
+//    }
 }
