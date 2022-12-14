@@ -4,6 +4,7 @@ import com.modsen.balancefromcard.dto.response.BalanceResponseDto;
 import com.modsen.balancefromcard.repository.BalanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -26,8 +27,8 @@ public class BalanceService {
         return balanceRepository.findByCardNumber(cardNumber).map(BalanceResponseDto::fromBalance);
     }
 
-//    @KafkaListener(topics = "balanceRequest")
-//    public void msgListener(String msg) {
-//        findBalanceByCardNumber(Long.valueOf(msg)).subscribe(result -> kafkaTemplate.send("balanceResponse", result));
-//    }
+    @KafkaListener(topics = "balanceRequest")
+    public void msgListener(String msg) {
+        findBalanceByCardNumber(Long.valueOf(msg)).subscribe(result -> kafkaTemplate.send("balanceResponse", result));
+    }
 }
