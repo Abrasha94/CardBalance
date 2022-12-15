@@ -29,7 +29,6 @@ public class BalanceService {
 
     @KafkaListener(topics = "balanceRequest")
     public void msgListener(String msg) {
-        System.out.println("-------------------WORK---------------------");
         findBalanceByCardNumber(Long.valueOf(msg)).subscribe(result -> kafkaTemplate.send("balanceResponse", result));
     }
 }

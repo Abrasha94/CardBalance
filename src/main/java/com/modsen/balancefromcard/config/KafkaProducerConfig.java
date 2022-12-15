@@ -21,8 +21,11 @@ import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_
 @Configuration
 public class KafkaProducerConfig {
 
-    @Value("spring.kafka.bootstrap-servers")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaServer;
+
+    @Value("${spring.kafka.producer.client-id}")
+    private String clientId;
 
 
     @Bean
@@ -31,7 +34,7 @@ public class KafkaProducerConfig {
         props.put(BOOTSTRAP_SERVERS_CONFIG, kafkaServer);
         props.put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(ProducerConfig.CLIENT_ID_CONFIG, "app.1");
+        props.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
         return props;
     }
 
