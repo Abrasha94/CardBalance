@@ -42,7 +42,7 @@ class BalanceServiceTest {
 
     @Test
     void shouldReturnBalanceResponseDto() {
-        doReturn(new Balance(BigDecimal.TEN, 12L, 32L)).when(balanceRepository).findByCardNumber(12L);
+        doReturn(new Balance("1", BigDecimal.TEN, 12L, 32L)).when(balanceRepository).findByCardNumber(12L);
         assertThat(balanceService.findBalanceByCardNumber(12L)).isInstanceOf(BalanceResponseDto.class)
                 .hasFieldOrPropertyWithValue("balance", BigDecimal.TEN);
     }
